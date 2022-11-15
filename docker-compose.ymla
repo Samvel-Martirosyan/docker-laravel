@@ -1,0 +1,30 @@
+version: '2.2'
+
+services:
+    php:
+        build:
+            context: docker/php
+        container_name: php
+        ports:
+            -   "80:80"
+    mysql:
+        build:
+            context: docker/mysql
+        container_name: mysql
+        restart: always
+        ports:
+            -   "3306:3306"
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_PASSWORD: 1234567
+    frontend:
+        image: node:10.16.3
+        container_name: frontend
+        command: bash -c "php artisan serve"
+        working_dir: /var/www/docker-laravel
+        ports:
+            - "3000:3000"
+        environment:
+            HOST: 0.0.0.0
